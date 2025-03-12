@@ -29,7 +29,7 @@ MiniMax is an open-sourced droid built to accelerate research and engineering ta
 
 ## Configure .env
 
-To store use the optional online mode, create a `.env` file in your root dir.
+To use the optional online mode, create a `.env` file in your root dir.
 ```
 touch .env
 ```
