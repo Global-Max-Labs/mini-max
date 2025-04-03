@@ -14,6 +14,14 @@ import threading
 import asyncio
 import sounddevice as sd
 
+wake_words = {
+    "mini max": "Mini Max",
+    "alfred": "Alfred",
+    "minimax": "Mini Max",
+    "mini macs": "Mini Max"
+    # Add more wake words as needed
+}
+
 
 def play_tone(frequency=440, duration=1.0, samplerate=44100):
     t = np.linspace(0, duration, int(samplerate * duration), endpoint=False)
@@ -196,9 +204,21 @@ def main():
 
         if result.no_speech_prob < 0.5:
             print(result.text)
-            if "mini max" in result.text.lower():
-                text = result.text.replace("mini max", "").replace("Mini Max", "")
+
+            # Check for any wake word in the text
+            detected_wake_word = None
+            for wake_word, assistant_name in wake_words.items():
+                if wake_word in result.text.lower():
+                    detected_wake_word = wake_word
+                    assistant_identity = assistant_name
+                    break
+
+            if detected_wake_word:
+                # Remove the wake word from the text
+                text = result.text.lower().replace(detected_wake_word, "").strip()
+                print(f"Wake word '{detected_wake_word}' detected. Assistant identity: {assistant_identity}")
                 print(f"Input Text: {text}")
+
                 data = {"space": "chatbot", "content": text}
                 resp = requests.post("http://localhost:8000/api/text/chat/", json=data)
                 print(resp.json())
