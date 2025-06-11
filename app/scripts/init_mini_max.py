@@ -9,7 +9,7 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent.parent.parent
 sys.path.append(str(project_root))
 
-from apps.nlp_router.src.services.inference import get_text_embeddings
+from app.services.inference import get_text_embeddings
 
 
 DB_PATH = Path("./data/lancedb")

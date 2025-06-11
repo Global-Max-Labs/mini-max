@@ -2,7 +2,7 @@ import uuid
 import json
 import numpy as np
 from fastapi import APIRouter, Request
-from apps.nlp_router.src.models.text import TextSearchRequest
+from app.models.text import TextSearchRequest
 
 router = APIRouter()
 

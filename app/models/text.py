@@ -1,6 +1,6 @@
 import typing as t
 from pydantic import BaseModel, Field
-from apps.nlp_router.src.models.base import MultiEmbeddings
+from app.nlp_router.src.models.base import MultiEmbeddings
 
 
 class Text(BaseModel):

@@ -5,8 +5,8 @@ from pydantic import BaseModel
 import lancedb
 
 load_dotenv(os.path.join(".env"))
-# from apps.nlp_router.src.api import text
-from apps.nlp_router.src.services.inference import get_text_embeddings
+# from app.api import text
+from app.services.inference import get_text_embeddings
 
 app = FastAPI()
 
