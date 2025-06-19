@@ -1,33 +1,29 @@
-[tool.poetry]
+[project]
 name = "mini-max"
 version = "0.1.0"
 description = "Illigitimi non carborundum"
 authors = ["Blake Danson <blakedanson@gmail.com>"]
 readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi[standard]>=0.115.12",
+    "transformers[torch]>=4.51.3",
+    "torch>=2.7.0",
+    "torchvision>=0.22.0",
+    "torchaudio>=2.7.0",
+    "lancedb>=0.21.2",
+    "sounddevice>=0.5.1",
+    "wavio>=0.0.9",
+    "openai-whisper>=20240930",
+    "pyaudio>=0.2.14",
+    "webrtcvad>=2.0.10",
+    "pyttsx3>=2.98",
+    "ffmpeg-python>=0.2.0",
+    "paho-mqtt>=2.1.0",
+    "pandas>=2.2.3",
+    "sentence-transformers>=4.1.0",
+    "pydantic-settings>=2.9.1",
+    "jupyterlab>=4.4.3",
+    "ipykernel>=6.29.5"
+]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-fastapi = {extras = ["standard"], version = "^0.115.12"}
-transformers = {extras = ["torch"], version = "^4.51.3"}
-torch = "^2.7.0"
-torchvision = "^0.22.0"
-torchaudio = "^2.7.0"
-lancedb = "^0.21.2"
-sounddevice = "^0.5.1"
-wavio = "^0.0.9"
-openai-whisper = "^20240930"
-pyaudio = "^0.2.14"
-webrtcvad = "^2.0.10"
-pyttsx3 = "^2.98"
-ffmpeg-python = "^0.2.0"
-paho-mqtt = "^2.1.0"
-pandas = "^2.2.3"
-sentence-transformers = "^4.1.0"
-pydantic-settings = "^2.9.1"
-jupyterlab = "^4.4.3"
-ipykernel = "^6.29.5"
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
