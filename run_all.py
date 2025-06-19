@@ -5,7 +5,7 @@ from app.main import app
 from app.stt.src.main import run_listener
 import uvicorn
 import mqtt_worker
-from mqtt_utils import ensure_mosquitto_docker
+from mqtt_utils import ensure_mosquitto_docker, ensure_ffmpeg
 
 def run_api():
     print("[FASTAPI] Starting API server...")
@@ -14,6 +14,9 @@ def run_api():
 def run_mqtt():
     print("[MQTT] Ensuring broker is available...")
     ensure_mosquitto_docker()
+
+    print("[FFMPEG] Ensuring FFMPEG is available...")
+    ensure_ffmpeg()
 
     print("[MQTT] Starting MQTT worker...")
     mqtt_worker.start_mqtt()
