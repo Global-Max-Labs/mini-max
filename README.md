@@ -23,7 +23,7 @@ MiniMax is an open-sourced droid built to accelerate research and engineering ta
 
 - Python 3.11.10 or higher
 - Pip 24.2 or higher
-- Poetry 1.8.3 or higher
+- Uv 0.7.13 or higher
 
 ## Development
 
@@ -45,12 +45,12 @@ OPENAI_API_KEY=you_know_the_drill
 From within the root directory:
 
 ```
-poetry install
+uv sync
 ```
 
 To create an ipykernel associated with this projects virtual env:
 ```
-poetry run python -m ipykernel install --user --name="gm_$(basename $(pwd))" --display-name="gm_$(basename $(pwd))"
+uv run python -m ipykernel install --user --name="gm_$(basename $(pwd))" --display-name="gm_$(basename $(pwd))"
 ```
 
 ### Defining and Running Experiments
@@ -58,7 +58,7 @@ poetry run python -m ipykernel install --user --name="gm_$(basename $(pwd))" --d
 From within the root directory:
 
 ```
-poetry run jupyter lab
+uv run jupyter lab
 ```
 
 **Research**
@@ -69,12 +69,12 @@ Experiments are organized locally under the `/experiments` dir. There you will s
 For development, I'm storing base ui templates in a folder titled `streamlit`. To serve locally, run the following command on the UI you want to serve
 Example:
 ```
-poetry run streamlit run ./streamlit/text/simple_chat_app.py
+uv run streamlit run ./streamlit/text/simple_chat_app.py
 ```
 
 Other options include:
-1. `poetry run streamlit run ./streamlit/text/fastapi_chat_app.py`
-1. `poetry run streamlit run ./streamlit/image/image_classify_app.py`
+1. `uv run streamlit run ./streamlit/text/fastapi_chat_app.py`
+1. `uv run streamlit run ./streamlit/image/image_classify_app.py`
 
 **Note**
 ### Serving FastApi Locally
@@ -82,7 +82,7 @@ Other options include:
 From within the root directory:
 
 ```
-poetry run fastapi dev app/main.py
+uv run fastapi dev app/main.py
 ```
 
 
@@ -91,7 +91,7 @@ poetry run fastapi dev app/main.py
 From within the root directory:
 
 ```
-poetry run pytest tests
+uv run pytest tests
 ```
 
 ### Code Formatting

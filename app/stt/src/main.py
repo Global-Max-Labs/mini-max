@@ -18,7 +18,15 @@ wake_words = {
     "mini max": "Mini Max",
     "alfred": "Alfred",
     "minimax": "Mini Max",
-    "mini macs": "Mini Max"
+    "mini macs": "Mini Max",
+    "Minnie Max": "Mini Max",
+    "Minnie Max": "Mini Max",
+    "Many max": "Mini Max",
+    "Mini Mac": "Mini Max",
+    "Mini Mac": "Mini Max",
+    "Mini-Max": "Mini Max",
+    "Mini-Mac": "Mini Max",
+    "MiniMac": "Mini Max",
     # Add more wake words as needed
 }
 
@@ -184,7 +192,7 @@ def start_audio_stream():
     return audio_buffer
 
 
-def main():
+def run_listener():
     while True:
         print('starting audio stream...')
         new_stream = start_audio_stream()
@@ -208,12 +216,13 @@ def main():
             # Check for any wake word in the text
             detected_wake_word = None
             for wake_word, assistant_name in wake_words.items():
-                if wake_word in result.text.lower():
+                if wake_word.lower() in result.text.lower():
                     detected_wake_word = wake_word
                     assistant_identity = assistant_name
                     break
 
             if detected_wake_word:
+            # if detected_wake_word:
                 # Remove the wake word from the text
                 text = result.text.lower().replace(detected_wake_word, "").strip()
                 print(f"Wake word '{detected_wake_word}' detected. Assistant identity: {assistant_identity}")
@@ -235,4 +244,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run_listener()
