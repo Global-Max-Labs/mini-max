@@ -178,3 +178,4 @@ cython_debug/
 
 # LanceDB
 data/*
+sentence_transformer_cache

@@ -4,16 +4,24 @@ import base64
 import numpy as np
 import torch
 from sentence_transformers import SentenceTransformer
+from functools import lru_cache
 
-# Check if MPS is available and set device
-device = torch.device("mps") if torch.backends.mps.is_built() else torch.device("cpu")
+@lru_cache(maxsize=1)
+def get_model():
+    print(f"Using model: Bert")
+    device = torch.device("mps") if torch.backends.mps.is_built() else torch.device("cpu")
+    # Specify a persistent cache directory
+    cache_folder = "./sentence_transformer_cache"
+    os.makedirs(cache_folder, exist_ok=True)
+    
+    model = SentenceTransformer(
+        'sentence-transformers/all-MiniLM-L6-v2',
+        cache_folder=cache_folder
+    )
+    model.to(device)
+    return model
 
-MODEL = os.environ.get("TEXT_MODEL", "use")
-print(f"Using model: Bert")
-
-# Load the pre-trained model from Hugging Face and send it to the MPS device
-model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-model.to(device)
+model = get_model()
 
 def get_text_embeddings(texts: list):
     """uses a pretrained sentence encoder from torch hub to get embeddings for a list of texts"""

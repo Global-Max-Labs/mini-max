@@ -48,6 +48,10 @@ From within the root directory:
 uv sync
 ```
 
+or 
+```
+uv pip install ".[jetson]"
+
 To create an ipykernel associated with this projects virtual env:
 ```
 uv run python -m ipykernel install --user --name="gm_$(basename $(pwd))" --display-name="gm_$(basename $(pwd))"
