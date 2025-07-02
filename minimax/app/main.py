@@ -3,10 +3,10 @@ from fastapi import FastAPI
 from dotenv import load_dotenv
 from pydantic import BaseModel
 import lancedb
-
-load_dotenv(os.path.join(".env"))
-# from app.api import text
-from app.services.inference import get_text_embeddings
+from minimax.app.core.config import settings
+from minimax.app.scripts.init_mini_max import remove_init, initialize
+from minimax.app.services.inference import get_text_embeddings
+from minimax.app.core.config import settings
 
 app = FastAPI()
 
@@ -27,8 +27,15 @@ class TextSearchRequest(BaseModel):
 @app.post("/api/text/chat/", tags=["text"])
 async def search_similar_text(req: TextSearchRequest):
     # Connect to LanceDB
-    db = lancedb.connect("./data/lancedb")
-    table = db.open_table("init_qa_action")
+    db = lancedb.connect(settings.DB_PATH)
+    
+    try:
+        table = db.open_table("init_qa_action")
+    except Exception as e:
+        print("Table 'init_qa_action' not found, creating with default values...")
+        remove_init()
+        initialize()
+        table = db.open_table("init_qa_action")
 
     embedding = get_text_embeddings([req.content])
     
@@ -41,7 +48,7 @@ async def search_similar_text(req: TextSearchRequest):
             score = result["_distance"]
             print("score: ", score)
             
-            if score < 0.55:
+            if score < 0.01:
                 print("score from user query", score)
                 answer = result["metadata"]["use_cases"]["chatbot"]
             else:

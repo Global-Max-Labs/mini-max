@@ -2,7 +2,9 @@
 name = "mini-max"
 version = "0.1.0"
 description = "Illigitimi non carborundum"
-authors = ["Blake Danson <blakedanson@gmail.com>"]
+authors = [
+    { name = "Blake Danson", email = "blakedanson@gmail.com"}
+]
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -17,6 +19,9 @@ dependencies = [
     "transformers[torch]>=4.51.3",
     "ffmpeg-python>=0.2.0",
 ]
+
+[project.scripts]
+minimax = "minimax.cli:main"  # Creates a command-line tool
 
 [dependency-groups]
 jetson = [
@@ -62,3 +67,6 @@ conflicts = [
       { group = "windows" },
     ],
 ]
+
+[tool.setuptools.package-data]
+app = ["scripts/test_text.csv"]  # This will include only test_text.csv

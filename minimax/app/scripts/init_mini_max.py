@@ -9,16 +9,14 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent.parent.parent
 sys.path.append(str(project_root))
 
-from app.services.inference import get_text_embeddings
+from minimax.app.services.inference import get_text_embeddings
+from minimax.app.core.config import settings
 
-
-DB_PATH = Path("./data/lancedb")
-
+DB_PATH = settings.DB_PATH
 
 def create_new_data_collection():
     # Create or connect to a LanceDB database
     db = lancedb.connect(DB_PATH)
-    
     # Create a table for init_qa_action if it doesn't exist
     if "init_qa_action" not in db.table_names():
         # Create a proper PyArrow schema instead of a dictionary

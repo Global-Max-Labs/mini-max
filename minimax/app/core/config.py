@@ -1,3 +1,4 @@
+import os
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
@@ -7,6 +8,8 @@ class Settings(BaseSettings):
     MQTT_USERNAME: str = ""
     MQTT_PASSWORD: str = ""
     MQTT_CLIENT_ID: str = "python_mqtt_client"
+    # Database Configuration
+    DB_PATH: str = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "lancedb")
     
     # Other application settings can be added here
     APP_NAME: str = "MQTT Application"
