@@ -89,6 +89,11 @@ From within the root directory:
 uv run fastapi dev app/main.py
 ```
 
+## Running MiniMax via cli
+```
+minimax start
+```
+
 
 ### Testing
 

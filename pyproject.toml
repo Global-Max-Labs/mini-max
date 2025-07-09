@@ -7,6 +7,7 @@ authors = [
 ]
 readme = "README.md"
 requires-python = ">=3.11"
+
 dependencies = [
     "fastapi[standard]>=0.115.12",
     "lancedb>=0.21.2",
@@ -23,7 +24,7 @@ dependencies = [
 [project.scripts]
 minimax = "minimax.cli:main"  # Creates a command-line tool
 
-[dependency-groups]
+[project.optional-dependencies]
 jetson = [
     "torch>=2.7.0",
     "torchvision>=0.22.0",
@@ -59,6 +60,7 @@ windows = [
 ]
 
 [tool.uv]
+package = true
 default-groups = ["macos"]
 conflicts = [
     [
@@ -68,5 +70,9 @@ conflicts = [
     ],
 ]
 
+[tool.setuptools]
+include-package-data = true
+
 [tool.setuptools.package-data]
-app = ["scripts/test_text.csv"]  # This will include only test_text.csv
+minimax = ["app/scripts/test_text.csv"]  # This will include only test_text.csv
+

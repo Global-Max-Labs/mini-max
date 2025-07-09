@@ -89,7 +89,6 @@ def save_all_text(data_collection_id, texts):
             "metadata": {"use_cases": {"chatbot": {"answer": text["answer"], "action": text["action"]}}},
             "cache": True
         }
-        print(record)
         records.append(record)
     
     # Add data to the table
