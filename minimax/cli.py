@@ -139,17 +139,18 @@ def _initialize_database_if_needed(init_file_path=None, verbose=False):
         
         # Check if table exists and has data
         table_exists = "init_qa_action" in db.table_names()
-        needs_reinit = False
+        needs_reinit = True
+        # needs_reinit = False
         
-        if table_exists:
-            table = db.open_table("init_qa_action")
-            count = table.count_rows()
+        # if table_exists:
+        #     table = db.open_table("init_qa_action")
+        #     count = table.count_rows()
             
-            # Reinitialize if empty or if we're using a different init file than test_text.csv
-            if count == 0 or "test_text.csv" not in current_init_file:
-                needs_reinit = True
-        else:
-            needs_reinit = True
+        #     # Reinitialize if empty or if we're using a different init file than test_text.csv
+        #     if count == 0 or init_file_path:
+        #         needs_reinit = True
+        # else:
+        #     needs_reinit = True
         
         if needs_reinit:
             if verbose:
