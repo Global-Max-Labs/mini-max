@@ -98,6 +98,11 @@ or pass a router.csv file with question, answer, action for offline mode.
 minimax start --init_file "./new_text.csv"
 ```
 
+## Run without installing the cli
+```
+python minimax/cli.py start
+```
+
 
 ### Testing
 
