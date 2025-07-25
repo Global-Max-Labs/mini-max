@@ -2,17 +2,17 @@
 import paho.mqtt.client as mqtt
 import importlib
 import pkgutil
-from app.core.config import settings
+from minimax.app.core.config import settings
 import time
 
 def load_plugins(client):
     print("[MQTT] Loading plugins...")
-    import app.plugins
+    import minimax.app.plugins
     found_plugins = False
     
-    for _, module_name, _ in pkgutil.iter_modules(app.plugins.__path__):
+    for _, module_name, _ in pkgutil.iter_modules(minimax.app.plugins.__path__):
         found_plugins = True
-        mod = importlib.import_module(f"app.plugins.{module_name}")
+        mod = importlib.import_module(f"minimax.app.plugins.{module_name}")
         print(f"[MQTT] Module: {mod} found")
         if hasattr(mod, "register"):
             print(f"[MQTT] Loading plugin: {module_name}")

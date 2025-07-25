@@ -3,10 +3,10 @@ from fastapi import FastAPI
 from dotenv import load_dotenv
 from pydantic import BaseModel
 import lancedb
-
-load_dotenv(os.path.join(".env"))
-# from app.api import text
-from app.services.inference import get_text_embeddings
+from minimax.app.core.config import settings
+from minimax.app.scripts.init_mini_max import remove_init, initialize
+from minimax.app.services.inference import get_text_embeddings
+from minimax.app.core.config import settings
 
 app = FastAPI()
 
@@ -27,7 +27,9 @@ class TextSearchRequest(BaseModel):
 @app.post("/api/text/chat/", tags=["text"])
 async def search_similar_text(req: TextSearchRequest):
     # Connect to LanceDB
-    db = lancedb.connect("./data/lancedb")
+    db = lancedb.connect(settings.DB_PATH)
+    
+    # Assume table exists (initialized by CLI)
     table = db.open_table("init_qa_action")
 
     embedding = get_text_embeddings([req.content])

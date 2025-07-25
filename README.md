@@ -48,6 +48,10 @@ From within the root directory:
 uv sync
 ```
 
+or 
+```
+uv pip install ".[jetson]"
+
 To create an ipykernel associated with this projects virtual env:
 ```
 uv run python -m ipykernel install --user --name="gm_$(basename $(pwd))" --display-name="gm_$(basename $(pwd))"
@@ -83,6 +87,20 @@ From within the root directory:
 
 ```
 uv run fastapi dev app/main.py
+```
+
+## Running MiniMax via cli
+```
+minimax start
+```
+or pass a router.csv file with question, answer, action for offline mode.
+```
+minimax start --init_file "./new_text.csv"
+```
+
+## Run without installing the cli
+```
+python minimax/cli.py start
 ```
 
 
