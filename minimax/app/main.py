@@ -29,19 +29,8 @@ async def search_similar_text(req: TextSearchRequest):
     # Connect to LanceDB
     db = lancedb.connect(settings.DB_PATH)
     
-    try:
-        table = db.open_table("init_qa_action")
-        count = table.count_rows()
-        print(count)
-        if count == 0:
-            remove_init()
-            initialize()
-            table = db.open_table("init_qa_action")
-    except Exception as e:
-        print("Table 'init_qa_action' not found, creating with default values...")
-        remove_init()
-        initialize()
-        table = db.open_table("init_qa_action")
+    # Assume table exists (initialized by CLI)
+    table = db.open_table("init_qa_action")
 
     embedding = get_text_embeddings([req.content])
     
@@ -55,7 +44,6 @@ async def search_similar_text(req: TextSearchRequest):
             print("score: ", score)
             
             if score < 0.55:
-            # if score < 0.55:
                 print("score from user query", score)
                 answer = result["metadata"]["use_cases"]["chatbot"]
             else:
