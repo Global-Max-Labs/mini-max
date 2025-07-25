@@ -13,6 +13,7 @@ from minimax.app.services.inference import get_text_embeddings
 from minimax.app.core.config import settings
 
 DB_PATH = settings.DB_PATH
+INIT_FILE = settings.INIT_FILE
 
 def create_new_data_collection():
     # Create or connect to a LanceDB database
@@ -53,17 +54,16 @@ def delete_data_collection():
         print("No data collection to delete")
 
 
-def get_all_text():
+def get_all_text(init_file_path=None):
     texts = []
-    # Use a path relative to the script location instead of the current working directory
-    script_dir = Path(__file__).parent
-    init_qa_action_path = (script_dir / "test_text.csv").resolve()
-    print(f"Looking for CSV at: {init_qa_action_path}")
+    # Get the file path from settings, which can be overridden by environment variable
+    csv_file_path = Path(init_file_path) or Path(INIT_FILE)
+    print(f"Looking for CSV at: {csv_file_path}")
     
-    if not init_qa_action_path.exists():
-        raise FileNotFoundError(f"CSV file not found at {init_qa_action_path}")
+    if not csv_file_path.exists():
+        raise FileNotFoundError(f"CSV file not found at {csv_file_path}")
         
-    with open(init_qa_action_path, "r") as f:
+    with open(csv_file_path, "r") as f:
         csv_texts = csv.DictReader(f)
         for text in csv_texts:
             print(text)
@@ -114,9 +114,9 @@ def delete_all_text(data_collection_id="init_qa_action"):
         print(f"Table {data_collection_id} does not exist")
 
 
-def initialize():
+def initialize(init_file_path=None):
     data_collection_id = create_new_data_collection()
-    texts = get_all_text()
+    texts = get_all_text(init_file_path)
     save_all_text(data_collection_id, texts)
     print('Done')
 
