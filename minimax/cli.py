@@ -8,15 +8,24 @@ import multiprocessing
 import time
 import signal
 import sys
+import os
 from pathlib import Path
+import logging
 
 # Import your existing modules
-from minimax.app.main import app
 from minimax.app.stt.src.main import run_listener
 import uvicorn
 from minimax.mqtt_worker import start_mqtt
 from minimax.mqtt_utils import ensure_mosquitto_docker, ensure_ffmpeg
 from minimax import __version__
+
+# Set up logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[logging.StreamHandler(sys.stdout)]
+)
+logger = logging.getLogger('minimax')
 
 # Global process tracking
 running_processes = []
@@ -60,7 +69,7 @@ def api(ctx, host, port, reload):
     
     try:
         uvicorn.run(
-            app, 
+            "minimax.app.main:app",  # Use string import instead of imported object
             host=host, 
             port=port,
             reload=reload,
@@ -120,13 +129,23 @@ def stt(ctx):
 @click.option('--services', '-s', multiple=True, 
               type=click.Choice(['api', 'mqtt', 'stt']),
               help='Specific services to run (default: all)')
+@click.option('--init_file', type=click.Path(exists=True), help='Path to custom initialization CSV file')
 @click.pass_context
-def start(ctx, api_host, api_port, skip_mqtt_setup, services):
+def start(ctx, api_host, api_port, skip_mqtt_setup, services, init_file):
     """Start all services (or specified services) in parallel."""
-    verbose = ctx.obj.get('verbose', False)
+    verbose = ctx.obj.get('verbose', True)
+    
+    if init_file:
+        # Convert to absolute path if relative
+        init_file_path = os.path.abspath(init_file)
+        os.environ['MINIMAX_INIT_FILE'] = init_file_path
+        if verbose:
+            print(f"Using custom init file: {init_file_path}")
+            click.echo(f"Using custom init file: {init_file_path}")
     
     # Default to all services if none specified
     if not services:
+        # services = ['api']
         services = ['api', 'mqtt', 'stt']
     
     global running_processes
@@ -135,15 +154,17 @@ def start(ctx, api_host, api_port, skip_mqtt_setup, services):
     if 'api' in services:
         if verbose:
             click.echo(f"[FASTAPI] Starting API server on {api_host}:{api_port}")
+            logger.info(f"Using custom init file: {init_file}")
         p_api = multiprocessing.Process(
             target=_run_api_process, 
-            args=(api_host, api_port, verbose)
+            args=(api_host, api_port, verbose, init_file)
         )
         processes.append(('API', p_api))
     
     if 'mqtt' in services:
         if verbose:
             click.echo("[MQTT] Starting MQTT worker...")
+            logger.info(f"Using custom init file: {init_file}")
         p_mqtt = multiprocessing.Process(
             target=_run_mqtt_process, 
             args=(skip_mqtt_setup, verbose)
@@ -153,6 +174,7 @@ def start(ctx, api_host, api_port, skip_mqtt_setup, services):
     if 'stt' in services:
         if verbose:
             click.echo("[STT] Starting STT worker...")
+            logger.info(f"Using custom init file: {init_file}")
         p_stt = multiprocessing.Process(target=_run_stt_process, args=(verbose,))
         processes.append(('STT', p_stt))
     
@@ -255,10 +277,17 @@ def stop():
 
 
 # Helper functions for multiprocessing
-def _run_api_process(host, port, verbose):
+def _run_api_process(host, port, verbose, init_file=None):
     """Run API in a separate process."""
+    if init_file:
+        # Convert to absolute path if relative
+        init_file_path = os.path.abspath(init_file)
+        os.environ['MINIMAX_INIT_FILE'] = init_file_path
+        if verbose:
+            print(f"[API] Using custom init file: {init_file_path}")
+    
     uvicorn.run(
-        app, 
+        "minimax.app.main:app",  # Use string import instead of imported object
         host=host, 
         port=port,
         log_level="info" if verbose else "warning"
