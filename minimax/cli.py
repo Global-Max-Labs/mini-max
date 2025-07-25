@@ -18,6 +18,9 @@ import uvicorn
 from minimax.mqtt_worker import start_mqtt
 from minimax.mqtt_utils import ensure_mosquitto_docker, ensure_ffmpeg
 from minimax import __version__
+from minimax.app.scripts.init_mini_max import remove_init, initialize
+import lancedb
+from minimax.app.core.config import settings
 
 # Set up logging
 logging.basicConfig(
@@ -122,6 +125,49 @@ def stt(ctx):
         sys.exit(1)
 
 
+def _initialize_database_if_needed(init_file_path=None, verbose=False):
+    """Initialize the database with the specified init file if needed."""
+    try:
+        # Use the provided init_file_path or fall back to settings
+        current_init_file = init_file_path or settings.INIT_FILE
+        
+        if verbose:
+            click.echo(f"[DB] Checking database initialization with: {current_init_file}")
+        
+        # Connect to LanceDB
+        db = lancedb.connect(settings.DB_PATH)
+        
+        # Check if table exists and has data
+        table_exists = "init_qa_action" in db.table_names()
+        needs_reinit = False
+        
+        if table_exists:
+            table = db.open_table("init_qa_action")
+            count = table.count_rows()
+            
+            # Reinitialize if empty or if we're using a different init file than test_text.csv
+            if count == 0 or "test_text.csv" not in current_init_file:
+                needs_reinit = True
+        else:
+            needs_reinit = True
+        
+        if needs_reinit:
+            if verbose:
+                click.echo("[DB] Initializing database...")
+            remove_init()
+            initialize(current_init_file)
+            if verbose:
+                click.echo("[DB] Database initialization complete")
+        else:
+            if verbose:
+                click.echo("[DB] Database already initialized")
+                
+    except Exception as e:
+        if verbose:
+            click.echo(f"[DB] Database initialization error: {e}")
+        raise
+
+
 @cli.command()
 @click.option('--api-host', default='0.0.0.0', help='API host')
 @click.option('--api-port', default=8000, type=int, help='API port')
@@ -142,6 +188,13 @@ def start(ctx, api_host, api_port, skip_mqtt_setup, services, init_file):
         if verbose:
             print(f"Using custom init file: {init_file_path}")
             click.echo(f"Using custom init file: {init_file_path}")
+    
+    # Initialize database before starting services
+    try:
+        _initialize_database_if_needed(init_file, verbose)
+    except Exception as e:
+        click.echo(f"❌ Database initialization failed: {e}", err=True)
+        sys.exit(1)
     
     # Default to all services if none specified
     if not services:
