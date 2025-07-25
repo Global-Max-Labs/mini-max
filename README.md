@@ -51,6 +51,7 @@ uv sync
 or 
 ```
 uv pip install ".[jetson]"
+```
 
 To create an ipykernel associated with this projects virtual env:
 ```
