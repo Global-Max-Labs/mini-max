@@ -141,10 +141,17 @@ black .
 
 ```
 mini-max/
-├── app/           # FastAPI application
-├── services/       # Core MiniMax modules
-├── tests/         # Test suite
-└── README.md      # You are here!
+├── minimax/           # Core MiniMax modules
+│   ├── app/          # FastAPI application
+│   ├── services/     # Core service modules
+│   ├── config/       # Configuration files
+│   └── cli.py        # Command-line interface
+├── tests/            # Test suite
+├── README.md         # You are here!
+├── CONTRIBUTING.md   # Contributing guidelines
+├── pyproject.toml    # Project configuration
+├── LICENSE           # MIT License
+└── docker-compose.yml # Docker configuration
 ```
 
 ---
@@ -224,18 +231,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 💬 Support
-
-- 📧 **Email**: [Contact us](mailto:support@minimax.com)
-- 💬 **Discord**: [Join our community](https://discord.gg/minimax)
-- 🐛 **Issues**: [Report bugs](https://github.com/your-org/mini-max/issues)
-
----
-
 <div align="center">
 
 **⭐ Star this repo if you find it helpful!**
 
-Made with ❤️ by the MiniMax team
+Made with ❤️ by the Global Max Labs team
 
 </div>
