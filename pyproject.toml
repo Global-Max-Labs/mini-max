@@ -73,6 +73,7 @@ conflicts = [
 
 [tool.setuptools]
 include-package-data = true
+packages = ["minimax"]
 
 [tool.setuptools.package-data]
 minimax = ["app/scripts/test_text.csv"]  # This will include only test_text.csv

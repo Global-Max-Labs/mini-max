@@ -4,31 +4,55 @@ import importlib
 import pkgutil
 from minimax.app.core.config import settings
 import time
+import sys
+import os
 
 
-def load_plugins(client):
+def load_plugins(client, plugins_dir=None):
     print("[MQTT] Loading plugins...")
-    import minimax.app.plugins
-
     found_plugins = False
 
-    for _, module_name, _ in pkgutil.iter_modules(minimax.app.plugins.__path__):
-        found_plugins = True
-        mod = importlib.import_module(f"minimax.app.plugins.{module_name}")
-        print(f"[MQTT] Module: {mod} found")
-        if hasattr(mod, "register"):
-            print(f"[MQTT] Loading plugin: {module_name}")
-            mod.register(client)
+    if plugins_dir:
+        plugins_dir = os.path.abspath(plugins_dir)
+        if not os.path.isdir(plugins_dir):
+            print(f"[MQTT] Provided plugins dir does not exist: {plugins_dir}")
+            return
+
+        # Keep plugins dir importable during plugin loading
+        if plugins_dir not in sys.path:
+            sys.path.insert(0, plugins_dir)
+
+        for _, module_name, _ in pkgutil.iter_modules([plugins_dir]):
+            found_plugins = True
+            try:
+                mod = importlib.import_module(module_name)
+                print(f"[MQTT] Module: {mod} found")
+                if hasattr(mod, "register"):
+                    print(f"[MQTT] Loading plugin: {module_name}")
+                    mod.register(client)
+            except Exception as e:
+                print(f"[MQTT] Error loading plugin {module_name}: {e}")
+    else:
+        import minimax.app.plugins
+        for _, module_name, _ in pkgutil.iter_modules(minimax.app.plugins.__path__):
+            found_plugins = True
+            mod = importlib.import_module(f"minimax.app.plugins.{module_name}")
+            print(f"[MQTT] Module: {mod} found")
+            if hasattr(mod, "register"):
+                print(f"[MQTT] Loading plugin: {module_name}")
+                mod.register(client)
 
     if not found_plugins:
-        print("[MQTT] No plugins found in app.plugins package")
+        print("[MQTT] No plugins found")
 
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
         print("[MQTT] Connected successfully to broker")
-        # Subscribe to topics after successful connection
-        load_plugins(client)
+        plugins_dir = None
+        if isinstance(userdata, dict):
+            plugins_dir = userdata.get("plugins_dir")
+        load_plugins(client, plugins_dir=plugins_dir)
     else:
         print(f"[MQTT] Failed to connect, return code: {rc}")
         # Connection return codes:
@@ -47,9 +71,12 @@ def on_disconnect(client, userdata, rc):
         print("[MQTT] Disconnected successfully")
 
 
-def start_mqtt():
+def start_mqtt(plugins_dir=None):
     print("[MQTT] Initializing MQTT client...")
     client = mqtt.Client(client_id=settings.MQTT_CLIENT_ID)
+
+    # Pass plugins_dir via userdata to callbacks
+    client.user_data_set({"plugins_dir": plugins_dir})
 
     # Set callbacks
     client.on_connect = on_connect

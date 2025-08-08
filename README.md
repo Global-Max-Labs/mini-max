@@ -110,6 +110,16 @@ minimax start
 minimax start --init_file "./your_router_file.csv"
 ```
 
+#### Start with custom plugins to be loaded
+```bash
+minimax start --plugins-dir "./plugins"
+```
+
+#### or both:
+```bash
+minimax start --init_file "./new_text.csv" --plugins-dir "./plugins"
+```
+
 #### Run without installing CLI
 ```bash
 python minimax/cli.py start

@@ -87,8 +87,9 @@ def api(ctx, host, port, reload):
 
 @cli.command()
 @click.option("--skip-setup", is_flag=True, help="Skip Docker/FFmpeg setup checks")
+@click.option("--plugins-dir", type=click.Path(exists=True, file_okay=False), help="Path to custom MQTT plugins directory")
 @click.pass_context
-def mqtt(ctx, skip_setup):
+def mqtt(ctx, skip_setup, plugins_dir):
     """Start the MQTT worker."""
     verbose = ctx.obj.get("verbose", False)
 
@@ -103,9 +104,11 @@ def mqtt(ctx, skip_setup):
 
     if verbose:
         click.echo("[MQTT] Starting MQTT worker...")
+        if plugins_dir:
+            click.echo(f"[MQTT] Using plugins dir: {plugins_dir}")
 
     try:
-        start_mqtt()
+        start_mqtt(plugins_dir=plugins_dir)
     except Exception as e:
         click.echo(f"❌ MQTT Error: {e}", err=True)
         sys.exit(1)
@@ -189,8 +192,13 @@ def _initialize_database_if_needed(init_file_path=None, verbose=False):
     type=click.Path(exists=True),
     help="Path to custom initialization CSV file",
 )
+@click.option(
+    "--plugins-dir",
+    type=click.Path(exists=True, file_okay=False),
+    help="Path to custom MQTT plugins directory",
+)
 @click.pass_context
-def start(ctx, api_host, api_port, skip_mqtt_setup, services, init_file):
+def start(ctx, api_host, api_port, skip_mqtt_setup, services, init_file, plugins_dir):
     """Start all services (or specified services) in parallel."""
     verbose = ctx.obj.get("verbose", True)
 
@@ -229,9 +237,11 @@ def start(ctx, api_host, api_port, skip_mqtt_setup, services, init_file):
     if "mqtt" in services:
         if verbose:
             click.echo("[MQTT] Starting MQTT worker...")
+            if plugins_dir:
+                click.echo(f"[MQTT] Using plugins dir: {plugins_dir}")
             logger.info(f"Using custom init file: {init_file}")
         p_mqtt = multiprocessing.Process(
-            target=_run_mqtt_process, args=(skip_mqtt_setup, verbose)
+            target=_run_mqtt_process, args=(skip_mqtt_setup, verbose, plugins_dir)
         )
         processes.append(("MQTT", p_mqtt))
 
@@ -366,12 +376,12 @@ def _run_api_process(host, port, verbose, init_file=None):
     )
 
 
-def _run_mqtt_process(skip_setup, verbose):
+def _run_mqtt_process(skip_setup, verbose, plugins_dir=None):
     """Run MQTT worker in a separate process."""
     if not skip_setup:
         ensure_mosquitto_docker()
         ensure_ffmpeg()
-    start_mqtt()
+    start_mqtt(plugins_dir=plugins_dir)
 
 
 def _run_stt_process(verbose):
