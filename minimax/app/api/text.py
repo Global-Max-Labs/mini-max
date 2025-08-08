@@ -16,9 +16,11 @@ async def search_similar_text(req: TextSearchRequest):
         answer = {"answer": "Please connect me to bubble network"}
         print("score: ", float(score))
         if float(score) < 0.55:
-        # if float(score) < 0.24:
+            # if float(score) < 0.24:
             print("score from user query", float(score))
-            answer = json.loads(resp[0][0].metadata)["use_cases"]["chatbot"] # change this to return chatbot, to include answer and action. then add action as a third column in th csv file.
+            answer = json.loads(resp[0][0].metadata)["use_cases"][
+                "chatbot"
+            ]  # change this to return chatbot, to include answer and action. then add action as a third column in th csv file.
     except KeyError as exc:
         print(exc)
 

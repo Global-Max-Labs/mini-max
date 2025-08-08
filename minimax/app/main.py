@@ -28,21 +28,25 @@ class TextSearchRequest(BaseModel):
 async def search_similar_text(req: TextSearchRequest):
     # Connect to LanceDB
     db = lancedb.connect(settings.DB_PATH)
-    
+
     # Assume table exists (initialized by CLI)
     table = db.open_table("init_qa_action")
 
     embedding = get_text_embeddings([req.content])
-    
+
     # Search for similar text using the content
-    results = table.search(embedding, vector_column_name="content_embedding").limit(1).to_list()
-    
+    results = (
+        table.search(embedding, vector_column_name="content_embedding")
+        .limit(1)
+        .to_list()
+    )
+
     try:
         if results:
             result = results[0]
             score = result["_distance"]
             print("score: ", score)
-            
+
             if score < 0.55:
                 print("score from user query", score)
                 answer = result["metadata"]["use_cases"]["chatbot"]
@@ -50,10 +54,9 @@ async def search_similar_text(req: TextSearchRequest):
                 answer = {"answer": "I'm not sure how to help with that", "action": ""}
         else:
             answer = {"answer": "No matching response found", "action": ""}
-            
+
     except KeyError as exc:
         print(exc)
         answer = {"answer": "Error processing request", "action": ""}
 
     return answer
-

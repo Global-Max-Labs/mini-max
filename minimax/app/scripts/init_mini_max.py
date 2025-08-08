@@ -15,29 +15,47 @@ from minimax.app.core.config import settings
 DB_PATH = settings.DB_PATH
 INIT_FILE = settings.INIT_FILE
 
+
 def create_new_data_collection():
     # Create or connect to a LanceDB database
     db = lancedb.connect(DB_PATH)
     # Create a table for init_qa_action if it doesn't exist
     if "init_qa_action" not in db.table_names():
         # Create a proper PyArrow schema instead of a dictionary
-        schema = pa.schema([
-            pa.field("content", pa.string()),
-            pa.field("content_embedding", pa.list_(pa.float32(), 384)),
-            pa.field("space", pa.string()),
-            pa.field("model_name", pa.string()),
-            pa.field("metadata", pa.struct([
-                pa.field("use_cases", pa.struct([
-                    pa.field("chatbot", pa.struct([
-                        pa.field("answer", pa.string()),
-                        pa.field("action", pa.string())
-                    ]))
-                ]))
-            ])),
-            pa.field("cache", pa.bool_())
-        ])
+        schema = pa.schema(
+            [
+                pa.field("content", pa.string()),
+                pa.field("content_embedding", pa.list_(pa.float32(), 384)),
+                pa.field("space", pa.string()),
+                pa.field("model_name", pa.string()),
+                pa.field(
+                    "metadata",
+                    pa.struct(
+                        [
+                            pa.field(
+                                "use_cases",
+                                pa.struct(
+                                    [
+                                        pa.field(
+                                            "chatbot",
+                                            pa.struct(
+                                                [
+                                                    pa.field("answer", pa.string()),
+                                                    pa.field("action", pa.string()),
+                                                ]
+                                            ),
+                                        )
+                                    ]
+                                ),
+                            )
+                        ]
+                    ),
+                ),
+                pa.field("cache", pa.bool_()),
+            ]
+        )
         db.create_table("init_qa_action", schema=schema)
-    
+
     print("Data collection 'init_qa_action' created")
     return "init_qa_action"
 
@@ -45,7 +63,7 @@ def create_new_data_collection():
 def delete_data_collection():
     # Connect to the database
     db = lancedb.connect(DB_PATH)
-    
+
     # Drop the table if it exists
     if "init_qa_action" in db.table_names():
         db.drop_table("init_qa_action")
@@ -59,10 +77,10 @@ def get_all_text(init_file_path=None):
     # Get the file path from settings, which can be overridden by environment variable
     csv_file_path = Path(init_file_path) or Path(INIT_FILE)
     print(f"Looking for CSV at: {csv_file_path}")
-    
+
     if not csv_file_path.exists():
         raise FileNotFoundError(f"CSV file not found at {csv_file_path}")
-        
+
     with open(csv_file_path, "r") as f:
         csv_texts = csv.DictReader(f)
         for text in csv_texts:
@@ -74,10 +92,10 @@ def get_all_text(init_file_path=None):
 def save_all_text(data_collection_id, texts):
     # Connect to the database
     db = lancedb.connect(DB_PATH)
-    
+
     # Get the table
     table = db.open_table(data_collection_id)
-    
+
     # Prepare data for insertion
     records = []
     for text in texts:
@@ -86,22 +104,26 @@ def save_all_text(data_collection_id, texts):
             "content_embedding": get_text_embeddings([text["question"]]),
             "space": "chatbot",
             "model_name": "use",
-            "metadata": {"use_cases": {"chatbot": {"answer": text["answer"], "action": text["action"]}}},
-            "cache": True
+            "metadata": {
+                "use_cases": {
+                    "chatbot": {"answer": text["answer"], "action": text["action"]}
+                }
+            },
+            "cache": True,
         }
         records.append(record)
-    
+
     # Add data to the table
     if records:
         table.add(records)
-    
+
     print("Text saved")
 
 
 def delete_all_text(data_collection_id="init_qa_action"):
     # Connect to the database
     db = lancedb.connect(DB_PATH)
-    
+
     # Get the table and clear it
     if data_collection_id in db.table_names():
         table = db.open_table(data_collection_id)
@@ -118,7 +140,7 @@ def initialize(init_file_path=None):
     data_collection_id = create_new_data_collection()
     texts = get_all_text(init_file_path)
     save_all_text(data_collection_id, texts)
-    print('Done')
+    print("Done")
 
 
 def remove_init():

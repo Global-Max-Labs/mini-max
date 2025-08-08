@@ -1,5 +1,3 @@
-
-
 # app/plugins/temp_sensor.py
 def register(mqtt_client):
     print("Registering temp sensor plugin")

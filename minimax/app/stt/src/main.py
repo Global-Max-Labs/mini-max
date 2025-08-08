@@ -51,12 +51,12 @@ async def set_new_timer(seconds):
 
 
 def play_video(video_filename):
-    #python subprocess to play video
-    print('starting subprocess')
+    # python subprocess to play video
+    print("starting subprocess")
     process = subprocess.Popen(
         ["ffplay", "-autoexit", f"./assets/{video_filename}.mp4"],
         stderr=subprocess.PIPE,
-        stdout=subprocess.PIPE
+        stdout=subprocess.PIPE,
     )
 
 
@@ -66,10 +66,14 @@ def show_text_file(text_filename):
 
 def trigger_action(action):
     if action == "play_cutting_shallots":
-        print('playing cutting shallots')
-        threading.Thread(target=play_video, args=["cutting_shallots"], daemon=True).start()
+        print("playing cutting shallots")
+        threading.Thread(
+            target=play_video, args=["cutting_shallots"], daemon=True
+        ).start()
     elif action == "play_cutting_mushrooms":
-        threading.Thread(target=play_video, args=["cutting_mushrooms"], daemon=True).start()
+        threading.Thread(
+            target=play_video, args=["cutting_mushrooms"], daemon=True
+        ).start()
     elif action == "show_veloute":
         threading.Thread(target=show_text_file, args=["veloute"], daemon=True).start()
     return None
@@ -78,26 +82,31 @@ def trigger_action(action):
 engine = pyttsx3.init()
 
 # change voice to male
-voices = engine.getProperty('voices')
+voices = engine.getProperty("voices")
 for voice in voices:
     if voice in voices:
         # print(voice.gender)
         # print(voice.languages)
         if voice.languages == ["en_GB"] and voice.name == "Daniel":
             print(voice)
-        #     print(voice.gender)
-            engine.setProperty('voice', voice.id)
+            #     print(voice.gender)
+            engine.setProperty("voice", voice.id)
             # engine.say("Hello, I am Alfred. How can I help you today sir?")
             # engine.runAndWait()
 
-print('loading model...')
+print("loading model...")
 model = whisper.load_model("base")
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  # check if GPU is available
+device = torch.device(
+    "cuda" if torch.cuda.is_available() else "cpu"
+)  # check if GPU is available
 model.to(device)  # move model to device (GPU or CPU)
-print('model loaded!')
+print("model loaded!")
+
+
 def exact_div(x, y):
     assert x % y == 0
     return x // y
+
 
 # hard-coded audio hyperparameters
 SAMPLE_RATE = 16000
@@ -106,7 +115,9 @@ N_MELS = 80
 HOP_LENGTH = 160
 CHUNK_LENGTH = 30
 N_SAMPLES = CHUNK_LENGTH * SAMPLE_RATE  # 480000: number of samples in a chunk
-N_FRAMES = exact_div(N_SAMPLES, HOP_LENGTH)  # 3000: number of frames in a mel spectrogram input
+N_FRAMES = exact_div(
+    N_SAMPLES, HOP_LENGTH
+)  # 3000: number of frames in a mel spectrogram input
 CHUNK_SIZE = 480
 # CHUNK_SIZE = 1024
 FORMAT = pyaudio.paInt16
@@ -140,9 +151,14 @@ def load_audio_stream(stream, sr: int = SAMPLE_RATE):
         out, _ = (
             ffmpeg.input("pipe:0", format="s16le", acodec="pcm_s16le", ac=1, ar=sr)
             .output("-", format="s16le", acodec="pcm_s16le", ac=1, ar=sr)
-            .run(cmd=["ffmpeg", "-nostdin"], capture_stdout=True, capture_stderr=True, input=stream.read())
+            .run(
+                cmd=["ffmpeg", "-nostdin"],
+                capture_stdout=True,
+                capture_stderr=True,
+                input=stream.read(),
+            )
         )
-        print('audio loaded!')
+        print("audio loaded!")
     except Exception as e:
         raise RuntimeError(f"Failed to load audio: {e}") from e
 
@@ -159,7 +175,7 @@ def start_audio_stream():
         channels=CHANNELS,
         rate=SAMPLE_RATE,
         input=True,
-        frames_per_buffer=CHUNK_SIZE
+        frames_per_buffer=CHUNK_SIZE,
     )
     # Create a bytes buffer to hold the audio data
     audio_buffer = io.BytesIO()
@@ -194,14 +210,14 @@ def start_audio_stream():
 
 def run_listener():
     while True:
-        print('starting audio stream...')
+        print("starting audio stream...")
         new_stream = start_audio_stream()
         print("loading audio...")
         audio = load_audio_stream(new_stream)
         print("processing audio...")
         audio = whisper.pad_or_trim(audio)
         mel = whisper.log_mel_spectrogram(audio).to(model.device)
-        options = whisper.DecodingOptions(language= 'en', fp16=False)
+        options = whisper.DecodingOptions(language="en", fp16=False)
 
         print("decoding...")
 
@@ -222,10 +238,12 @@ def run_listener():
                     break
 
             if detected_wake_word:
-            # if detected_wake_word:
+                # if detected_wake_word:
                 # Remove the wake word from the text
                 text = result.text.lower().replace(detected_wake_word, "").strip()
-                print(f"Wake word '{detected_wake_word}' detected. Assistant identity: {assistant_identity}")
+                print(
+                    f"Wake word '{detected_wake_word}' detected. Assistant identity: {assistant_identity}"
+                )
                 print(f"Input Text: {text}")
 
                 data = {"space": "chatbot", "content": text}
@@ -233,13 +251,15 @@ def run_listener():
                 print(resp.json())
                 if resp.json()["answer"] != "Please connect me to bubble network":
                     if "action" in resp.json() and resp.json()["action"] != "":
-                        print(resp.json()["action"],' triggering this action')
+                        print(resp.json()["action"], " triggering this action")
                         trigger_action(resp.json()["action"])
                     else:
                         engine.say(resp.json()["answer"])
                         engine.runAndWait()
                 else:
-                    engine.say("I have no idea what you are saying. Use your batman voice")
+                    engine.say(
+                        "I have no idea what you are saying. Use your batman voice"
+                    )
                     engine.runAndWait()
 
 

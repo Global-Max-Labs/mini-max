@@ -1,9 +1,12 @@
 import paho.mqtt.client as mqtt
 
-def publish_message(topic: str, message: str, host: str = "localhost", port: int = 1883):
+
+def publish_message(
+    topic: str, message: str, host: str = "localhost", port: int = 1883
+):
     """
     Publish a message to an MQTT topic
-    
+
     Args:
         topic (str): The MQTT topic to publish to
         message (str): The message to publish
@@ -14,6 +17,7 @@ def publish_message(topic: str, message: str, host: str = "localhost", port: int
     client.connect(host, port, 60)
     client.publish(topic, message)
     client.disconnect()
+
 
 if __name__ == "__main__":
     # Example usage

@@ -19,6 +19,7 @@ dependencies = [
     "ipykernel>=6.29.5",
     "transformers[torch]>=4.51.3",
     "ffmpeg-python>=0.2.0",
+    "black>=25.1.0",
 ]
 
 [project.scripts]
@@ -61,7 +62,7 @@ windows = [
 
 [tool.uv]
 package = true
-default-groups = ["macos"]
+# default-groups = ["macos"]
 conflicts = [
     [
       { group = "jetson" },
