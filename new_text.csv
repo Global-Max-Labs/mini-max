@@ -1,5 +1,5 @@
 question,answer,action
-Hi how are you?,I'm feeling fussy today,
-Hi how's it going?,I'm feeling fussy today,
-What's up?,Not much,
-What's your name?,My name is R.Daneel,
+Hi how are you?,I'm feeling fussy today,shift_vibe
+Hi how's it going?,I'm feeling fussy today,shift_vibe_to_happy
+What's up?,Not much,shift_vibe_to_excited
+What's your name?,My name is R.Daneel,shift_vibe_to_relaxed
