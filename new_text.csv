@@ -1,5 +1,5 @@
-question,answer,action
-Hi how are you?,I'm feeling fussy today,shift_vibe
-Hi how's it going?,I'm feeling fussy today,shift_vibe_to_happy
-What's up?,Not much,shift_vibe_to_excited
-What's your name?,My name is R.Daneel,shift_vibe_to_relaxed
+question|answer|action|message_data
+Hi how are you?|I'm feeling fussy today|shift_vibe|{"vibe": "happy","lights": "blue","sound": "beep"}
+Hi how's it going?|I'm feeling fussy today|shift_vibe|{"vibe": "excited","lights": "green","sound": "beep"}
+What's up?|Not much|shift_vibe|{"vibe": "relaxed","lights": "blue","sound": "beep"}
+What's your name?|My name is R.Daneel|shift_vibe|{"vibe": "scared","lights": "red","sound": "boop"}
