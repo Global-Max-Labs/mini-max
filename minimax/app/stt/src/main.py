@@ -13,6 +13,8 @@ import subprocess
 import threading
 import asyncio
 import sounddevice as sd
+import json
+from minimax.mqtt_publisher import publish_message
 
 wake_words = {
     "mini max": "Mini Max",
@@ -64,7 +66,58 @@ def show_text_file(text_filename):
     process = subprocess.Popen(["open", f"./assets/{text_filename}.txt"])
 
 
+def shift_vibe(vibe: str="happy"):
+    print(f"Shifting vibe: {vibe}")
+    # TODO: Implement vibe shift logic
+    # 1. Change vibe
+    # 2. Change lights
+    # 3. Change sound
+    # 4. Return success message
+
+    if vibe == "happy":
+        vibe_data = {
+            "vibe": "happy",
+            "lights": "blue",
+            "sound": "beep"
+        }
+    elif vibe == "excited":
+        vibe_data = {
+            "vibe": "excited",
+            "lights": "green",
+            "sound": "beep"
+        }
+    elif vibe == "relaxed":
+        vibe_data = {
+            "vibe": "relaxed",
+            "lights": "blue",
+            "sound": "beep"
+        }
+    elif vibe == "scared":
+        vibe_data = {
+            "vibe": "scared",
+            "lights": "red",
+            "sound": "boop"
+        }
+    else:
+        print(f"Unknown vibe: {vibe}")
+        return "Unknown vibe"
+    publish_message(topic="sensors/temp", message=json.dumps(vibe_data))
+    return "Vibe shifted successfully"
+
+
 def trigger_action(action):
+    if action == "shift_vibe":
+        shift_vibe()
+        return "Vibe shifted successfully"
+    elif action == "shift_vibe_to_happy":
+        shift_vibe("happy")
+        return "Vibe shifted to happy"
+    elif action == "shift_vibe_to_excited":
+        shift_vibe("excited")
+    elif action == "shift_vibe_to_relaxed":
+        shift_vibe("relaxed")
+    elif action == "shift_vibe_to_scared":
+        shift_vibe("scared")
     if action == "play_cutting_shallots":
         print("playing cutting shallots")
         threading.Thread(
@@ -76,6 +129,8 @@ def trigger_action(action):
         ).start()
     elif action == "show_veloute":
         threading.Thread(target=show_text_file, args=["veloute"], daemon=True).start()
+    else:
+        print(f"Unknown action: {action}")
     return None
 
 
@@ -253,6 +308,9 @@ def run_listener():
                     if "action" in resp.json() and resp.json()["action"] != "":
                         print(resp.json()["action"], " triggering this action")
                         trigger_action(resp.json()["action"])
+                        if resp.json()["answer"] != "":
+                            engine.say(resp.json()["answer"])
+                            engine.runAndWait()
                     else:
                         engine.say(resp.json()["answer"])
                         engine.runAndWait()
