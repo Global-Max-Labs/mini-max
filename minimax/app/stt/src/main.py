@@ -62,42 +62,6 @@ def play_video(video_filename):
     )
 
 
-def show_text_file(text_filename):
-    process = subprocess.Popen(["open", f"./assets/{text_filename}.txt"])
-
-
-def shift_vibe(message_data):
-    print(f"Shifting vibe: {message_data}, type: {type(message_data)}")
-    # TODO: Implement vibe shift logic
-    # 1. Change vibe
-    # 2. Change lights
-    # 3. Change sound
-    # 4. Return success message
-
-    publish_message(topic="sensors/temp", message=message_data)
-    return "Vibe shifted successfully"
-
-
-def trigger_action(action, message_data=None):
-    if action == "shift_vibe":
-        shift_vibe(message_data)
-        return "Vibe shifted successfully"
-    if action == "play_cutting_shallots":
-        print("playing cutting shallots")
-        threading.Thread(
-            target=play_video, args=["cutting_shallots"], daemon=True
-        ).start()
-    elif action == "play_cutting_mushrooms":
-        threading.Thread(
-            target=play_video, args=["cutting_mushrooms"], daemon=True
-        ).start()
-    elif action == "show_veloute":
-        threading.Thread(target=show_text_file, args=["veloute"], daemon=True).start()
-    else:
-        print(f"Unknown action: {action}")
-    return None
-
-
 engine = pyttsx3.init()
 
 # change voice to male
@@ -271,7 +235,7 @@ def run_listener():
                 if resp.json()["answer"] != "Please connect me to bubble network":
                     if "action" in resp.json() and resp.json()["action"] != "":
                         print(resp.json()["action"], " triggering this action")
-                        trigger_action(resp.json()["action"], resp.json()["message_data"])
+                        publish_message(topic=resp.json()["action"], message=resp.json()["message_data"])
                         if resp.json()["answer"] != "":
                             engine.say(resp.json()["answer"])
                             engine.runAndWait()

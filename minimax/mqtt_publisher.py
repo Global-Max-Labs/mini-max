@@ -27,4 +27,4 @@ if __name__ == "__main__":
         "lights": "blue",
         "sound": "beep"
     }
-    publish_message("sensors/temp", json.dumps(vibe_data))
+    publish_message("external/intents/vibe_shift", json.dumps(vibe_data))

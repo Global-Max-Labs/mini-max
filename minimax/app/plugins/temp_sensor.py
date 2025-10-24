@@ -1,10 +1,10 @@
 # app/plugins/temp_sensor.py
 def register(mqtt_client):
-    print("Registering temp sensor plugin")
-    mqtt_client.subscribe("sensors/temp")
-    print("Subscribed to sensors/temp")
+    print("Registering lights effector plugin")
+    mqtt_client.subscribe("external/intents/vibe_shift")
+    print("Subscribed to external/intents/vibe_shift")
 
     def callback(client, userdata, message):
-        print(f"[TempSensor] Received: {message.payload.decode()}")
+        print(f"[LightsEffector] Received: {message.payload.decode()}")
 
-    mqtt_client.message_callback_add("sensors/temp", callback)
+    mqtt_client.message_callback_add("external/intents/vibe_shift", callback)
