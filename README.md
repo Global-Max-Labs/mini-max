@@ -13,6 +13,12 @@
 Get MiniMax running in under 2 minutes:
 
 ```bash
+# Create a virtual env with python 3.11
+uv venv --python 3.11
+
+# Activate this env
+source .venv/bin/activate
+
 # Install for your platform
 uv pip install ".[macos]"    # For macOS
 
@@ -21,6 +27,17 @@ minimax start
 ```
 
 That's it! 🎉
+
+minimax will initialize in offline mode with default queries and responses, and you can start asking questions with your voice.
+
+From this base you can extend with:
+1. More queries & responses.
+1. Trigger actions with mqtt message publishing to topics.
+1. Override default plugins with your own `plugins` dir saved in your root directory.
+    1. Add custom topic subscriptions (for example: vibe_shift to change the lights and music).
+    1. Add custom actions that are registered as callbacks to the custom plugin subscribers.
+1. Get creative, and you can build an entire droid with this (sensors to publish messages, plugins to trigger actions, and actions to move effectors)
+1. Lots more coming, keep watch on our development roadmap for more details 🎉
 
 **Note**
 Other platforms coming soon...
@@ -73,6 +90,10 @@ MiniMax is a research and engineering assistant, bridging the gap between softwa
 - **UV** 0.7.13 or higher
 
 ### Install MiniMax
+
+```
+uv venv --python 3.11
+```
 
 Install Dependancies for your given platform:
 ```bash
