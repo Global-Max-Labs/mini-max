@@ -31,7 +31,7 @@ def ensure_mosquitto_docker():
                 "-p",
                 "1883:1883",
                 "--rm",
-                "eclipse-mosquitto",
+                "eclipse-mosquitto:1.6.15",
             ],
             check=True,
         )
