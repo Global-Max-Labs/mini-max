@@ -87,7 +87,11 @@ def api(ctx, host, port, reload):
 
 @cli.command()
 @click.option("--skip-setup", is_flag=True, help="Skip Docker/FFmpeg setup checks")
-@click.option("--plugins-dir", type=click.Path(exists=True, file_okay=False), help="Path to custom MQTT plugins directory")
+@click.option(
+    "--plugins-dir",
+    type=click.Path(exists=True, file_okay=False),
+    help="Path to custom MQTT plugins directory",
+)
 @click.pass_context
 def mqtt(ctx, skip_setup, plugins_dir):
     """Start the MQTT worker."""
@@ -311,7 +315,14 @@ def status():
         import subprocess
 
         result = subprocess.run(
-            ["docker", "ps", "--filter", "name=iot-mosquitto", "--format", "{{.Names}}"],
+            [
+                "docker",
+                "ps",
+                "--filter",
+                "name=iot-mosquitto",
+                "--format",
+                "{{.Names}}",
+            ],
             capture_output=True,
             text=True,
         )

@@ -42,7 +42,9 @@ def create_new_data_collection():
                                                 [
                                                     pa.field("answer", pa.string()),
                                                     pa.field("action", pa.string()),
-                                                    pa.field("message_data", pa.string()),
+                                                    pa.field(
+                                                        "message_data", pa.string()
+                                                    ),
                                                 ]
                                             ),
                                         )
@@ -107,7 +109,11 @@ def save_all_text(data_collection_id, texts):
             "model_name": "use",
             "metadata": {
                 "use_cases": {
-                    "chatbot": {"answer": text["answer"], "action": text["action"], "message_data": text["message_data"]}
+                    "chatbot": {
+                        "answer": text["answer"],
+                        "action": text["action"],
+                        "message_data": text["message_data"],
+                    }
                 }
             },
             "cache": True,

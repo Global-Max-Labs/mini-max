@@ -235,7 +235,10 @@ def run_listener():
                 if resp.json()["answer"] != "Please connect me to bubble network":
                     if "action" in resp.json() and resp.json()["action"] != "":
                         print(resp.json()["action"], " triggering this action")
-                        publish_message(topic=resp.json()["action"], message=resp.json()["message_data"])
+                        publish_message(
+                            topic=resp.json()["action"],
+                            message=resp.json()["message_data"],
+                        )
                         if resp.json()["answer"] != "":
                             engine.say(resp.json()["answer"])
                             engine.runAndWait()

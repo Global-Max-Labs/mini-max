@@ -1,9 +1,10 @@
 import json
 
+
 def process_vibe_shift(vibe_data):
     """
     Process vibe shift data containing vibe, lights and sound settings.
-    
+
     Args:
         vibe_data (dict): Dictionary containing vibe, lights and sound values
     """

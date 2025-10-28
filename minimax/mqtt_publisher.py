@@ -22,9 +22,5 @@ def publish_message(
 
 if __name__ == "__main__":
     # Example usage
-    vibe_data = {
-        "vibe": "happy",
-        "lights": "blue",
-        "sound": "beep"
-    }
+    vibe_data = {"vibe": "happy", "lights": "blue", "sound": "beep"}
     publish_message("external/intents/vibe_shift", json.dumps(vibe_data))

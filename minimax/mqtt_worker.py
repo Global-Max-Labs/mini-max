@@ -34,6 +34,7 @@ def load_plugins(client, plugins_dir=None):
                 print(f"[MQTT] Error loading plugin {module_name}: {e}")
     else:
         import minimax.app.plugins
+
         for _, module_name, _ in pkgutil.iter_modules(minimax.app.plugins.__path__):
             found_plugins = True
             mod = importlib.import_module(f"minimax.app.plugins.{module_name}")
