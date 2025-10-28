@@ -13,6 +13,8 @@ import subprocess
 import threading
 import asyncio
 import sounddevice as sd
+import json
+from minimax.mqtt_publisher import publish_message
 
 wake_words = {
     "mini max": "Mini Max",
@@ -58,25 +60,6 @@ def play_video(video_filename):
         stderr=subprocess.PIPE,
         stdout=subprocess.PIPE,
     )
-
-
-def show_text_file(text_filename):
-    process = subprocess.Popen(["open", f"./assets/{text_filename}.txt"])
-
-
-def trigger_action(action):
-    if action == "play_cutting_shallots":
-        print("playing cutting shallots")
-        threading.Thread(
-            target=play_video, args=["cutting_shallots"], daemon=True
-        ).start()
-    elif action == "play_cutting_mushrooms":
-        threading.Thread(
-            target=play_video, args=["cutting_mushrooms"], daemon=True
-        ).start()
-    elif action == "show_veloute":
-        threading.Thread(target=show_text_file, args=["veloute"], daemon=True).start()
-    return None
 
 
 engine = pyttsx3.init()
@@ -252,7 +235,10 @@ def run_listener():
                 if resp.json()["answer"] != "Please connect me to bubble network":
                     if "action" in resp.json() and resp.json()["action"] != "":
                         print(resp.json()["action"], " triggering this action")
-                        trigger_action(resp.json()["action"])
+                        publish_message(topic=resp.json()["action"], message=resp.json()["message_data"])
+                        if resp.json()["answer"] != "":
+                            engine.say(resp.json()["answer"])
+                            engine.runAndWait()
                     else:
                         engine.say(resp.json()["answer"])
                         engine.runAndWait()

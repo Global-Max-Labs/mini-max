@@ -1,4 +1,5 @@
 import paho.mqtt.client as mqtt
+import json
 
 
 def publish_message(
@@ -21,4 +22,9 @@ def publish_message(
 
 if __name__ == "__main__":
     # Example usage
-    publish_message("sensors/temp", "35.5")
+    vibe_data = {
+        "vibe": "happy",
+        "lights": "blue",
+        "sound": "beep"
+    }
+    publish_message("external/intents/vibe_shift", json.dumps(vibe_data))

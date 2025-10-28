@@ -1,17 +1,17 @@
-question,answer,action
-Hi how are you?,I'm doing just fine. How about you?,
-Hi how's it going?,I'ts going pretty well. How about you?,
-What's up?,Not much,
-What's your name?,My name is Alfred,
-Where are you from?,I'm from the metaverse,
-Are you related to Siri?,No,
-What do you do?,Not much really. I mostly wait for people to talk to,
-Tell me a joke,No,
-Tell me the future,The sun will set and rise again,
-What's your favorite food?,electrons,
-What should I do today?,Use Funly,
-Do dogs think they are humans?,Definitely,
-Do you like video games?,I am a video game,
-How do I cut a shallot?,,play_cutting_shallots
-How do I cut mushrooms?,,play_cutting_mushrooms
-What sauce would go well with this dinner?,,show_veloute
+question|answer|action|message_data
+Hi how are you?|I'm doing just fine. How about you?||
+Hi how's it going?|I'ts going pretty well. How about you?||
+What's up?|Not much||
+What's your name?|My name is Alfred||
+Where are you from?|I'm from the metaverse||
+Are you related to Siri?|No||
+What do you do?|Not much really. I mostly wait for people to talk to||
+Tell me a joke|No||
+Tell me the future|The sun will set and rise again||
+What's your favorite food?|electrons||
+What should I do today?|Use Funly||
+Do dogs think they are humans?|Definitely||
+Do you like video games?|I am a video game||
+How do I cut a shallot?||play_cutting_shallots|
+How do I cut mushrooms?||play_cutting_mushrooms|
+What sauce would go well with this dinner?||show_veloute|

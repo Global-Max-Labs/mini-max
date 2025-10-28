@@ -1,6 +1,6 @@
 [project]
 name = "mini-max"
-version = "0.1.0"
+version = "0.1.1"
 description = "Illigitimi non carborundum"
 authors = [
     { name = "Blake Danson", email = "blakedanson@gmail.com"}
@@ -9,17 +9,54 @@ readme = "README.md"
 requires-python = ">=3.11"
 
 dependencies = [
-    "fastapi[standard]>=0.115.12",
-    "lancedb>=0.21.2",
-    "paho-mqtt>=2.1.0",
-    "pandas>=2.2.3",
-    "sentence-transformers>=4.1.0",
-    "pydantic-settings>=2.9.1",
-    "jupyterlab>=4.4.3",
-    "ipykernel>=6.29.5",
-    "transformers[torch]>=4.51.3",
-    "ffmpeg-python>=0.2.0",
-    "black>=25.1.0",
+    # ASGI/web trio pinned (avoid fastapi[standard] to prevent silent upgrades)
+    "fastapi==0.115.12",
+    "starlette==0.46.2",
+    "uvicorn==0.34.3",
+    "httptools==0.6.4",
+
+    # HTTP clients (sync/async)
+    "httpx==0.28.1",
+    "requests==2.32.4",
+
+    # Data & numeric stack (match working env)
+    "pandas==2.3.0",
+    "pyarrow==20.0.0",
+    "numpy==2.2.6",
+    "numba==0.61.2",
+    "llvmlite==0.44.0",
+
+    # NLP/ML (no transformers[torch]; pin explicitly)
+    "transformers==4.51.3",
+    "tokenizers==0.21.1",
+    "accelerate==1.7.0",
+    "sentence-transformers==4.1.0",
+    "tiktoken==0.9.0",
+    "huggingface-hub==0.32.5",
+    "safetensors==0.5.3",
+    "scikit-learn==1.7.0",
+    "scipy==1.15.3",
+
+    # CLI / UX
+    "typer==0.16.0",
+    "rich==14.0.0",
+
+    # Config
+    "pydantic==2.11.5",
+    "pydantic-settings==2.9.1",
+    "python-dotenv==1.1.0",
+    "PyYAML==6.0.2",
+    "email_validator==2.2.0",
+
+    # Tools
+    "lancedb==0.21.2",
+    "paho-mqtt==2.1.0",
+    "ffmpeg-python==0.2.0",
+    "black==25.9.0",
+
+    # Jupyter
+    "jupyterlab==4.4.3",
+    "ipykernel==6.29.5",
 ]
 
 [project.scripts]
@@ -38,15 +75,21 @@ jetson = [
     "pyttsx3>=2.98",
 ]
 macos = [
-    "torch>=2.7.0",
-    "torchvision>=0.22.0",
-    "torchaudio>=2.7.0",
-    "sounddevice>=0.5.1",
-    "wavio>=0.0.9",
-    "openai-whisper>=20240930",
-    "pyaudio>=0.2.14",
-    "webrtcvad>=2.0.10",
-    "pyttsx3>=2.98",
+    # Torch stack (from your freeze)
+    "torch==2.7.1",
+    "torchvision==0.22.1",
+    "torchaudio==2.7.1",
+
+    # Audio / speech IO
+    "sounddevice==0.5.2",
+    "wavio==0.0.9",
+    "openai-whisper==20240930",
+    "pyaudio==0.2.14",
+    "webrtcvad==2.0.10",
+    "pyttsx3==2.98",
+
+    # Image utils commonly needed with torchvision
+    "pillow==11.2.1",
 ]
 windows = [
     "torch>=2.7.0",
@@ -73,7 +116,11 @@ conflicts = [
 
 [tool.setuptools]
 include-package-data = true
-packages = ["minimax"]
+
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["minimax*"]
 
 [tool.setuptools.package-data]
 minimax = ["app/scripts/test_text.csv"]  # This will include only test_text.csv

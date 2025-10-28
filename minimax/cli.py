@@ -311,11 +311,11 @@ def status():
         import subprocess
 
         result = subprocess.run(
-            ["docker", "ps", "--filter", "name=mosquitto", "--format", "{{.Names}}"],
+            ["docker", "ps", "--filter", "name=iot-mosquitto", "--format", "{{.Names}}"],
             capture_output=True,
             text=True,
         )
-        mqtt_running = "mosquitto" in result.stdout
+        mqtt_running = "iot-mosquitto" in result.stdout
         click.echo(f"MQTT Broker: {'🟢 Running' if mqtt_running else '🔴 Not running'}")
     except:
         click.echo("MQTT Broker: ❓ Unable to check")
@@ -337,7 +337,7 @@ def stop():
     try:
         import subprocess
 
-        subprocess.run(["docker", "stop", "mosquitto"], capture_output=True)
+        subprocess.run(["docker", "stop", "iot-mosquitto"], capture_output=True)
         click.echo("✅ Stopped MQTT broker")
     except:
         pass

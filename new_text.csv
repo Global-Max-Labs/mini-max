@@ -1,5 +1,5 @@
-question,answer,action
-Hi how are you?,I'm feeling fussy today,
-Hi how's it going?,I'm feeling fussy today,
-What's up?,Not much,
-What's your name?,My name is R.Daneel,
+question|answer|action|message_data
+Hi how are you?|I'm feeling fussy today|external/intents/vibe_shift|{"vibe": "happy","lights": "blue","sound": "beep"}
+Hi how's it going?|I'm feeling fussy today|external/intents/vibe_shift|{"vibe": "excited","lights": "green","sound": "beep"}
+What's up?|Not much|external/intents/vibe_shift|{"vibe": "relaxed","lights": "blue","sound": "beep"}
+What's your name?|My name is R.Daneel|external/intents/vibe_shift|{"vibe": "scared","lights": "red","sound": "boop"}

@@ -42,6 +42,7 @@ def create_new_data_collection():
                                                 [
                                                     pa.field("answer", pa.string()),
                                                     pa.field("action", pa.string()),
+                                                    pa.field("message_data", pa.string()),
                                                 ]
                                             ),
                                         )
@@ -82,7 +83,7 @@ def get_all_text(init_file_path=None):
         raise FileNotFoundError(f"CSV file not found at {csv_file_path}")
 
     with open(csv_file_path, "r") as f:
-        csv_texts = csv.DictReader(f)
+        csv_texts = csv.DictReader(f, delimiter="|")
         for text in csv_texts:
             print(text)
             texts.append(text)
@@ -106,7 +107,7 @@ def save_all_text(data_collection_id, texts):
             "model_name": "use",
             "metadata": {
                 "use_cases": {
-                    "chatbot": {"answer": text["answer"], "action": text["action"]}
+                    "chatbot": {"answer": text["answer"], "action": text["action"], "message_data": text["message_data"]}
                 }
             },
             "cache": True,
